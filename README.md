@@ -14,7 +14,8 @@ git clone https://github.com/lwei88/courier-service.git
 ```
 
 2. Start the application by running the command below in Terminal:
-   For Problem 1:
+
+For Problem 1:
 
 ```
 node src/app.1.js
