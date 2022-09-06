@@ -35,7 +35,7 @@ describe('Estimate cost', () => {
     });
   });
 
-  it('Test Case 2: OFR001, <200 positive case', () => {
+  it('Test Case 2 (test edge case): OFR001, Pkg1 with <200 distance case', () => {
     const costEstimator = new CostEstimator(100);
     packages = [
       {
@@ -67,7 +67,7 @@ describe('Estimate cost', () => {
     });
   });
 
-  it('Test Case 3: OFR001, 200 distance case, should not get any discount', () => {
+  it('Test Case 3 (test minmax value exclusive): OFR001, Pkg1 200 distance case, should not get any discount', () => {
     const costEstimator = new CostEstimator(100);
     packages = [
       {
