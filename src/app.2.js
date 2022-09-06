@@ -46,10 +46,17 @@ function main() {
 
   const costEstimator = new CostEstimator(baseDeliveryCost);
   const timeEstimator = new TimeEstimator(noOfVehicles, maxSpeed, maxWeight);
+  const packageCost = costEstimator.estimate(packages);
   const packageTime = timeEstimator.estimate(packages);
+
   const res = packages.map((x) => {
-    const result = costEstimator.estimate(x.pkgTotalWeight, x.distance, x.offerCode);
-    return util.format('%s %s %s', x.pkgId, result.discount, result.totalCost, packageTime[x.pkgId]);
+    return util.format(
+      '%s %s %s %s',
+      x.pkgId,
+      packageCost[x.pkgId].discount,
+      packageCost[x.pkgId].totalCost,
+      packageTime[x.pkgId]
+    );
   });
 
   console.log(res.join('\n') + '\n');

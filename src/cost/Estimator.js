@@ -10,10 +10,15 @@ class Estimator {
     this.deliveryCostFunction = deliveryCostFunction;
   }
 
-  estimate(pkgTotalWeight, distance, offerCode) {
-    const cost = this.deliveryCostFunction(this.baseDeliveryCost, pkgTotalWeight, distance);
-    const disc = cost * discount(pkgTotalWeight, distance, offerCode);
-    return { discount: Math.round(disc), totalCost: Math.round(cost - disc) };
+  estimate(packages) {
+    return packages.reduce((prev, curr) => {
+      const cost = this.deliveryCostFunction(this.baseDeliveryCost, curr.pkgTotalWeight, curr.distance);
+      const disc = cost * discount(curr.pkgTotalWeight, curr.distance, curr.offerCode);
+
+      if (!prev[curr.pkgId]) prev[curr.pkgId] = { discount: Math.round(disc), totalCost: Math.round(cost - disc) };
+
+      return prev;
+    }, {});
   }
 }
 

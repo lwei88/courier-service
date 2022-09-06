@@ -40,9 +40,10 @@ function main() {
   }
 
   const estimator = new Estimator(baseDeliveryCost);
+  const cost = estimator.estimate(packages);
+
   const res = packages.map((x) => {
-    const result = estimator.estimate(x.pkgTotalWeight, x.distance, x.offerCode);
-    return util.format('%s %s %s', x.pkgId, result.discount, result.totalCost);
+    return util.format('%s %s %s', x.pkgId, cost[x.pkgId].discount, cost[x.pkgId].totalCost);
   });
 
   console.log(res.join('\n') + '\n');
