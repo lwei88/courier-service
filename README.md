@@ -60,25 +60,34 @@ PKG5 155 95 NA
 
 _Reminder: Hit CTRL-D after finished input the data into the Terminal_
 
-###
+#
 
-### Ideology and thought process:
+#
+
+# Ideology and thought process:
 
 I separated the issue into 2 parts. One for Problem 1 (Cost estimation). Another one for Problem 2(Time estimation). However, both share the same codebase as problem 2 will share part of the logic from the first part.
 
 ## Cost Estimation:
 
 One of the important factors in this part is to enable us to easily make changes to the **base delivery cost calculation** and the **offer code**.
+
 So i separated the **base delivery cost calculation** into a separated function. We can inject any function to the "Estimator" in case we wanted to test out any new formula.
+
 Besides, i also separated the **offer code** into different module, enabled us to add new offer codes or make any changes to anything related to **discount**.
-I also make the data structure of the offer, so that it can cater for different comparison of the value whether it's inclusive or exclusive.
+
+I also make sure the data structure of the **offer**, so that it can cater for different comparison of the value whether it's inclusive or exclusive.
 
 ## Time Estimation:
 
 Part 2 become quite a challenging task.
+
 First, i make a recursive function to find out all the different combination of packages. Then, filter out all the packages that exceeded the defined weight. Next, sort it by weight. Using a while loop, pop out the first trip's packages. Then remove the packages that existed within the array. The loop will break when the array become empty.
+
 Now we have all the packages combination ordered to be picked by delivery vehicle.
+
 Next, we needed to tackle how the each package's delivery time to be calculated. So, a ledger of accumulated after each trip was confirmed.
+
 So, i used a reduce method for each trip, instantiate a beginning state for each vehicle depends on how many are available. For example: 2 vehicle the instantiated state will looked like the json below:
 
 ```
@@ -157,8 +166,11 @@ By the end, we should be able to get a ledger looked like this:
 ```
 
 So what is **hr**?
+
 It is the return time used for each trip. It's calculated based on the max distance of the package \* 2 / maxspeed.
+
 So how do we determine which vehicle to update, when we append to the ledger, we determine by the previous min value of **hr** among all the vehicle.
+
 For each package, we just needed to add the time used for each trip on top of last **hr**.
 
 Once we got the completed ledger, we can use reduce function to get individual package with their delivery time.
