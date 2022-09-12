@@ -11,7 +11,7 @@ function getCombinations(arr) {
 
 const groupPackageByMaxWeight = (maxWeight, packages) => {
   const packageIds = packages.map((x) => x.pkgId);
-  const allPackageCombinations = getCombinations(packageIds);
+  const allPackageCombinations = getCombinations(packageIds).reverse(); // Get combinations recursive function, will return the last element first. so use the reverse function to sort the combinations according to the input sequence.
 
   let packageCombsWeight = allPackageCombinations
     .map((pckComb) => {
