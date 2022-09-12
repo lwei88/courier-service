@@ -15,14 +15,23 @@ const groupPackageByMaxWeight = (maxWeight, packages) => {
 
   let packageCombsWeight = allPackageCombinations
     .map((pckComb) => {
-      const weight = packages.reduce((prev, curr) => {
-        return pckComb.includes(curr.pkgId) ? prev + curr.pkgTotalWeight : prev;
+      const thisShipmentPackages = packages.reduce((prev, curr) => {
+        if (pckComb.includes(curr.pkgId)) prev.push(curr);
+        return prev;
+      }, []);
+
+      const weight = thisShipmentPackages.reduce((prev, curr) => {
+        return prev + curr.pkgTotalWeight;
       }, 0);
 
-      return { id: pckComb.join('-'), pckComb, weight };
+      const minDistance = Math.min(...thisShipmentPackages.map((p) => p.distance));
+
+      return { id: pckComb.join('-'), pckComb, weight, minDistance };
     })
     .filter((x) => x.weight <= maxWeight)
-    .sort((a, b) => b.weight - a.weight);
+    .sort((a, b) => a.minDistance - b.minDistance)
+    .sort((a, b) => b.weight - a.weight)
+    .sort((a, b) => b.pckComb.length - a.pckComb.length);
 
   const packageGroup = [];
   while (packageCombsWeight.length > 0) {
