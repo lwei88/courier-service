@@ -184,4 +184,88 @@ P4 150 90 OFR001
 
     expect(result).toMatchObject({ P1: 1.42, P2: 4.26, P3: 4.26, P4: 1.28 });
   });
+
+  /*
+100 4
+P1 50 100 OFR002
+P2 50 100 OFR001
+P3 150 100 OFR003
+P4 150 90 OFR001
+1 70 150
+  */
+  it('Test Case 5: Vehicle - max weight', () => {
+    const timeEst = new TimeEstimator(1, 70, 150);
+    packages = [
+      {
+        pkgId: 'P1',
+        pkgTotalWeight: 50,
+        distance: 100,
+        offerCode: 'OFR002',
+      },
+      {
+        pkgId: 'P2',
+        pkgTotalWeight: 50,
+        distance: 100,
+        offerCode: 'OFR001',
+      },
+      {
+        pkgId: 'P3',
+        pkgTotalWeight: 150,
+        distance: 100,
+        offerCode: 'OFR003',
+      },
+      {
+        pkgId: 'P4',
+        pkgTotalWeight: 150,
+        distance: 90,
+        offerCode: 'OFR001',
+      },
+    ];
+
+    const result = timeEst.estimate(packages);
+
+    expect(result).toMatchObject({ P1: 1.42, P2: 1.42, P3: 6.82, P4: 4.12 });
+  });
+
+  /*
+100 4
+P1 50 100 OFR002
+P2 50 100 OFR001
+P3 150 100 OFR003
+P4 150 90 OFR001
+1 70 150
+  */
+  it('Test Case 6: Vehicle - max speed', () => {
+    const timeEst = new TimeEstimator(1, 100, 150);
+    packages = [
+      {
+        pkgId: 'P1',
+        pkgTotalWeight: 50,
+        distance: 100,
+        offerCode: 'OFR002',
+      },
+      {
+        pkgId: 'P2',
+        pkgTotalWeight: 50,
+        distance: 100,
+        offerCode: 'OFR001',
+      },
+      {
+        pkgId: 'P3',
+        pkgTotalWeight: 150,
+        distance: 100,
+        offerCode: 'OFR003',
+      },
+      {
+        pkgId: 'P4',
+        pkgTotalWeight: 150,
+        distance: 90,
+        offerCode: 'OFR001',
+      },
+    ];
+
+    const result = timeEst.estimate(packages);
+
+    expect(result).toMatchObject({ P1: 1, P2: 1, P3: 4.8, P4: 2.9 });
+  });
 });
