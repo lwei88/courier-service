@@ -2,6 +2,7 @@
 const util = require('util');
 const CostEstimator = require('./cost/Estimator');
 const TimeEstimator = require('./time/Estimator');
+const Package = require('./entities/Package');
 
 process.stdin.resume();
 process.stdin.setEncoding('utf-8');
@@ -30,13 +31,8 @@ function main() {
 
   let packages = [];
   for (let i = 0; i < noOfPackages; i++) {
-    const [pkgId, pkgTotalWeight, distance, offerCode] = readLine().trim().split(' ');
-    packages.push({
-      pkgId,
-      pkgTotalWeight: parseInt(pkgTotalWeight),
-      distance: parseInt(distance),
-      offerCode,
-    });
+    const [id, weight, distance, offerCode] = readLine().trim().split(' ');
+    packages.push(new Package(id, weight, distance, offerCode));
   }
 
   let [noOfVehicles, maxSpeed, maxWeight] = readLine()
@@ -49,13 +45,13 @@ function main() {
   const packageCost = costEstimator.estimate(packages);
   const packageTime = timeEstimator.estimate(packages);
 
-  const res = packages.map((x) => {
+  const res = packages.map((pkg) => {
     return util.format(
       '%s %s %s %s',
-      x.pkgId,
-      packageCost[x.pkgId].discount,
-      packageCost[x.pkgId].totalCost,
-      packageTime[x.pkgId]
+      pkg.id,
+      packageCost[pkg.id].discount,
+      packageCost[pkg.id].totalCost,
+      packageTime[pkg.id]
     );
   });
 

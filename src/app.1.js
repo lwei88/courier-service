@@ -1,6 +1,7 @@
 'use strict';
 const util = require('util');
 const Estimator = require('./cost/Estimator');
+const Package = require('./entities/Package');
 
 process.stdin.resume();
 process.stdin.setEncoding('utf-8');
@@ -30,20 +31,15 @@ function main() {
   let packages = [];
 
   for (let i = 0; i < noOfPackages; i++) {
-    const [pkgId, pkgTotalWeight, distance, offerCode] = readLine().trim().split(' ');
-    packages.push({
-      pkgId,
-      pkgTotalWeight: parseInt(pkgTotalWeight),
-      distance: parseInt(distance),
-      offerCode,
-    });
+    const [id, weight, distance, offerCode] = readLine().trim().split(' ');
+    packages.push(new Package(id, weight, distance, offerCode));
   }
 
   const estimator = new Estimator(baseDeliveryCost);
   const cost = estimator.estimate(packages);
 
-  const res = packages.map((x) => {
-    return util.format('%s %s %s', x.pkgId, cost[x.pkgId].discount, cost[x.pkgId].totalCost);
+  const res = packages.map((pkg) => {
+    return util.format('%s %s %s', pkg.id, cost[pkg.id].discount, cost[pkg.id].totalCost);
   });
 
   console.log(res.join('\n') + '\n');

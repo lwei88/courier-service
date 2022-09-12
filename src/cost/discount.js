@@ -16,20 +16,20 @@ const Offer = {
   },
 };
 
-const discount = (weight, distance, offerCode) => {
-  const code = offerCode.toLowerCase();
+const discount = (pkg) => {
+  const code = pkg.offerCode.toLowerCase();
   if (
     Offer[code] &&
     // Check weight
-    weight >= Offer[code].weight.min.value &&
-    (!Offer[code].weight.min.exclusive || weight > Offer[code].weight.min.value) &&
-    weight <= Offer[code].weight.max.value &&
-    (!Offer[code].weight.max.exclusive || weight < Offer[code].weight.max.value) &&
+    pkg.weight >= Offer[code].weight.min.value &&
+    (!Offer[code].weight.min.exclusive || pkg.weight > Offer[code].weight.min.value) &&
+    pkg.weight <= Offer[code].weight.max.value &&
+    (!Offer[code].weight.max.exclusive || pkg.weight < Offer[code].weight.max.value) &&
     // Check distance
-    distance >= Offer[code].distance.min.value &&
-    (!Offer[code].distance.min.exclusive || distance > Offer[code].distance.min.value) &&
-    distance <= Offer[code].distance.max.value &&
-    (!Offer[code].distance.max.exclusive || distance < Offer[code].distance.max.value)
+    pkg.distance >= Offer[code].distance.min.value &&
+    (!Offer[code].distance.min.exclusive || pkg.distance > Offer[code].distance.min.value) &&
+    pkg.distance <= Offer[code].distance.max.value &&
+    (!Offer[code].distance.max.exclusive || pkg.distance < Offer[code].distance.max.value)
   )
     return Offer[code].discount;
 

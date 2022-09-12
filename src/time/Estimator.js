@@ -9,22 +9,22 @@ function getCombinations(arr) {
   }
 }
 
-const groupPackageByMaxWeight = (maxWeight, packages) => {
-  const packageIds = packages.map((x) => x.pkgId);
+const groupPackageByMaxWeight = (maxWeight, pkgs) => {
+  const packageIds = pkgs.map((pkg) => pkg.id);
   const allPackageCombinations = getCombinations(packageIds).reverse(); // Get combinations recursive function, will return the last element first. so use the reverse function to sort the combinations according to the input sequence.
 
   let packageCombsWeight = allPackageCombinations
     .map((pckComb) => {
-      const thisShipmentPackages = packages.reduce((prev, curr) => {
-        if (pckComb.includes(curr.pkgId)) prev.push(curr);
+      const thisShipmentPackages = pkgs.reduce((prev, pkg) => {
+        if (pckComb.includes(pkg.id)) prev.push(pkg);
         return prev;
       }, []);
 
-      const weight = thisShipmentPackages.reduce((prev, curr) => {
-        return prev + curr.pkgTotalWeight;
+      const weight = thisShipmentPackages.reduce((prev, pkg) => {
+        return prev + pkg.weight;
       }, 0);
 
-      const minDistance = Math.min(...thisShipmentPackages.map((p) => p.distance));
+      const minDistance = Math.min(...thisShipmentPackages.map((pkg) => pkg.distance));
 
       return { id: pckComb.join('-'), pckComb, weight, minDistance };
     })
@@ -55,7 +55,7 @@ const schedule = (trips, packages, noOfVehicles, maxSpeed) => {
       const pckCombOneWayHr = curr.pckComb.map((id) => {
         return {
           pkgId: id,
-          oneWayHr: Math.floor((packages.find((p) => p.pkgId == id).distance / maxSpeed) * 100) / 100,
+          oneWayHr: Math.floor((packages.find((pkg) => pkg.id == id).distance / maxSpeed) * 100) / 100,
         };
       });
 
