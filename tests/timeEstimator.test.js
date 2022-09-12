@@ -100,4 +100,88 @@ describe('Estimate time', () => {
 
     expect(result).toMatchObject({ P1: 1.42, P2: 1.42, P3: 4.26, P4: 7.1, P5: 1.42 });
   });
+
+  /*
+  100 4
+  P1 30 100 OFR002
+  P2 50 100 OFR001
+  P3 150 100 OFR003
+  P4 130 100 OFR001
+  1 70 200
+  */
+  it('Test Case 3: Delivery criteria - contain max packages, heavier packages', () => {
+    const timeEst = new TimeEstimator(1, 70, 200);
+    packages = [
+      {
+        pkgId: 'P1',
+        pkgTotalWeight: 30,
+        distance: 100,
+        offerCode: 'OFR002',
+      },
+      {
+        pkgId: 'P2',
+        pkgTotalWeight: 50,
+        distance: 100,
+        offerCode: 'OFR001',
+      },
+      {
+        pkgId: 'P3',
+        pkgTotalWeight: 150,
+        distance: 100,
+        offerCode: 'OFR003',
+      },
+      {
+        pkgId: 'P4',
+        pkgTotalWeight: 130,
+        distance: 100,
+        offerCode: 'OFR001',
+      },
+    ];
+
+    const result = timeEst.estimate(packages);
+
+    expect(result).toMatchObject({ P1: 4.26, P2: 1.42, P3: 1.42, P4: 4.26 });
+  });
+
+  /*
+100 4
+P1 50 100 OFR002
+P2 50 100 OFR001
+P3 150 100 OFR003
+P4 150 90 OFR001
+1 70 200
+  */
+  it('Test Case 4: Delivery criteria - contain max packages, heavier packages, minimum distance', () => {
+    const timeEst = new TimeEstimator(1, 70, 200);
+    packages = [
+      {
+        pkgId: 'P1',
+        pkgTotalWeight: 50,
+        distance: 100,
+        offerCode: 'OFR002',
+      },
+      {
+        pkgId: 'P2',
+        pkgTotalWeight: 50,
+        distance: 100,
+        offerCode: 'OFR001',
+      },
+      {
+        pkgId: 'P3',
+        pkgTotalWeight: 150,
+        distance: 100,
+        offerCode: 'OFR003',
+      },
+      {
+        pkgId: 'P4',
+        pkgTotalWeight: 150,
+        distance: 90,
+        offerCode: 'OFR001',
+      },
+    ];
+
+    const result = timeEst.estimate(packages);
+
+    expect(result).toMatchObject({ P1: 1.42, P2: 4.26, P3: 4.26, P4: 1.28 });
+  });
 });
