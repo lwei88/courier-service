@@ -1,6 +1,7 @@
 require('jest');
 
 const TimeEstimator = require('../src/time/Estimator');
+const Package = require('../src/entities/Package');
 
 describe('Estimate time', () => {
   /*
@@ -10,41 +11,16 @@ describe('Estimate time', () => {
   PKG3 175 100 OFR003
   PKG4 110 60 OFR002
   PKG5 155 95 NA
-  2 70 20
+  2 70 200
   */
   it('Test Case 1', () => {
     const timeEst = new TimeEstimator(2, 70, 200);
     packages = [
-      {
-        pkgId: 'PKG1',
-        pkgTotalWeight: 50,
-        distance: 30,
-        offerCode: 'OFR001',
-      },
-      {
-        pkgId: 'PKG2',
-        pkgTotalWeight: 75,
-        distance: 125,
-        offerCode: 'OFR008',
-      },
-      {
-        pkgId: 'PKG3',
-        pkgTotalWeight: 175,
-        distance: 100,
-        offerCode: 'OFR003',
-      },
-      {
-        pkgId: 'PKG4',
-        pkgTotalWeight: 110,
-        distance: 60,
-        offerCode: 'OFR002',
-      },
-      {
-        pkgId: 'PKG5',
-        pkgTotalWeight: 155,
-        distance: 95,
-        offerCode: 'NA',
-      },
+      new Package('PKG1', 50, 30, 'OFR001'),
+      new Package('PKG2', 75, 125, 'OFR002'),
+      new Package('PKG3', 175, 100, 'OFR003'),
+      new Package('PKG4', 110, 60, 'OFR002'),
+      new Package('PKG5', 155, 95, 'NA'),
     ];
 
     const result = timeEst.estimate(packages);
@@ -64,36 +40,11 @@ describe('Estimate time', () => {
   it('Test Case 2: Delivery criteria - contain max packages', () => {
     const timeEst = new TimeEstimator(1, 70, 200);
     packages = [
-      {
-        pkgId: 'P1',
-        pkgTotalWeight: 50,
-        distance: 100,
-        offerCode: 'OFR002',
-      },
-      {
-        pkgId: 'P2',
-        pkgTotalWeight: 50,
-        distance: 100,
-        offerCode: 'OFR001',
-      },
-      {
-        pkgId: 'P3',
-        pkgTotalWeight: 150,
-        distance: 100,
-        offerCode: 'OFR003',
-      },
-      {
-        pkgId: 'P4',
-        pkgTotalWeight: 99,
-        distance: 100,
-        offerCode: 'OFR001',
-      },
-      {
-        pkgId: 'P5',
-        pkgTotalWeight: 100,
-        distance: 100,
-        offerCode: 'OFR001',
-      },
+      new Package('P1', 50, 100, 'OFR002'),
+      new Package('P2', 50, 100, 'OFR001'),
+      new Package('P3', 150, 100, 'OFR003'),
+      new Package('P4', 99, 100, 'OFR001'),
+      new Package('P5', 100, 100, 'OFR001'),
     ];
 
     const result = timeEst.estimate(packages);
@@ -112,30 +63,10 @@ describe('Estimate time', () => {
   it('Test Case 3: Delivery criteria - contain max packages, heavier packages', () => {
     const timeEst = new TimeEstimator(1, 70, 200);
     packages = [
-      {
-        pkgId: 'P1',
-        pkgTotalWeight: 30,
-        distance: 100,
-        offerCode: 'OFR002',
-      },
-      {
-        pkgId: 'P2',
-        pkgTotalWeight: 50,
-        distance: 100,
-        offerCode: 'OFR001',
-      },
-      {
-        pkgId: 'P3',
-        pkgTotalWeight: 150,
-        distance: 100,
-        offerCode: 'OFR003',
-      },
-      {
-        pkgId: 'P4',
-        pkgTotalWeight: 130,
-        distance: 100,
-        offerCode: 'OFR001',
-      },
+      new Package('P1', 30, 100, 'OFR002'),
+      new Package('P2', 50, 100, 'OFR001'),
+      new Package('P3', 150, 100, 'OFR003'),
+      new Package('P4', 130, 100, 'OFR001'),
     ];
 
     const result = timeEst.estimate(packages);
@@ -154,30 +85,10 @@ P4 150 90 OFR001
   it('Test Case 4: Delivery criteria - contain max packages, heavier packages, minimum distance', () => {
     const timeEst = new TimeEstimator(1, 70, 200);
     packages = [
-      {
-        pkgId: 'P1',
-        pkgTotalWeight: 50,
-        distance: 100,
-        offerCode: 'OFR002',
-      },
-      {
-        pkgId: 'P2',
-        pkgTotalWeight: 50,
-        distance: 100,
-        offerCode: 'OFR001',
-      },
-      {
-        pkgId: 'P3',
-        pkgTotalWeight: 150,
-        distance: 100,
-        offerCode: 'OFR003',
-      },
-      {
-        pkgId: 'P4',
-        pkgTotalWeight: 150,
-        distance: 90,
-        offerCode: 'OFR001',
-      },
+      new Package('P1', 50, 100, 'OFR002'),
+      new Package('P2', 50, 100, 'OFR001'),
+      new Package('P3', 150, 100, 'OFR003'),
+      new Package('P4', 150, 90, 'OFR001'),
     ];
 
     const result = timeEst.estimate(packages);
@@ -196,30 +107,10 @@ P4 150 90 OFR001
   it('Test Case 5: Vehicle - max weight', () => {
     const timeEst = new TimeEstimator(1, 70, 150);
     packages = [
-      {
-        pkgId: 'P1',
-        pkgTotalWeight: 50,
-        distance: 100,
-        offerCode: 'OFR002',
-      },
-      {
-        pkgId: 'P2',
-        pkgTotalWeight: 50,
-        distance: 100,
-        offerCode: 'OFR001',
-      },
-      {
-        pkgId: 'P3',
-        pkgTotalWeight: 150,
-        distance: 100,
-        offerCode: 'OFR003',
-      },
-      {
-        pkgId: 'P4',
-        pkgTotalWeight: 150,
-        distance: 90,
-        offerCode: 'OFR001',
-      },
+      new Package('P1', 50, 100, 'OFR002'),
+      new Package('P2', 50, 100, 'OFR001'),
+      new Package('P3', 150, 100, 'OFR003'),
+      new Package('P4', 150, 90, 'OFR001'),
     ];
 
     const result = timeEst.estimate(packages);
@@ -233,35 +124,15 @@ P1 50 100 OFR002
 P2 50 100 OFR001
 P3 150 100 OFR003
 P4 150 90 OFR001
-1 70 150
+1 100 150
   */
   it('Test Case 6: Vehicle - max speed', () => {
     const timeEst = new TimeEstimator(1, 100, 150);
     packages = [
-      {
-        pkgId: 'P1',
-        pkgTotalWeight: 50,
-        distance: 100,
-        offerCode: 'OFR002',
-      },
-      {
-        pkgId: 'P2',
-        pkgTotalWeight: 50,
-        distance: 100,
-        offerCode: 'OFR001',
-      },
-      {
-        pkgId: 'P3',
-        pkgTotalWeight: 150,
-        distance: 100,
-        offerCode: 'OFR003',
-      },
-      {
-        pkgId: 'P4',
-        pkgTotalWeight: 150,
-        distance: 90,
-        offerCode: 'OFR001',
-      },
+      new Package('P1', 50, 100, 'OFR002'),
+      new Package('P2', 50, 100, 'OFR001'),
+      new Package('P3', 150, 100, 'OFR003'),
+      new Package('P4', 150, 90, 'OFR001'),
     ];
 
     const result = timeEst.estimate(packages);

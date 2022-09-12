@@ -1,29 +1,15 @@
 require('jest');
 
 const CostEstimator = require('../src/cost/Estimator');
+const Package = require('../src/entities/Package');
 
 describe('Estimate cost', () => {
   it('Test Case 1', () => {
     const costEstimator = new CostEstimator(100);
     packages = [
-      {
-        pkgId: 'PKG1',
-        pkgTotalWeight: 5,
-        distance: 5,
-        offerCode: 'OFR001',
-      },
-      {
-        pkgId: 'PKG2',
-        pkgTotalWeight: 15,
-        distance: 5,
-        offerCode: 'OFR002',
-      },
-      {
-        pkgId: 'PKG3',
-        pkgTotalWeight: 10,
-        distance: 100,
-        offerCode: 'OFR003',
-      },
+      new Package('PKG1', 5, 5, 'OFR001'),
+      new Package('PKG2', 15, 5, 'OFR002'),
+      new Package('PKG3', 10, 100, 'OFR003'),
     ];
 
     const result = costEstimator.estimate(packages);
@@ -38,24 +24,9 @@ describe('Estimate cost', () => {
   it('Test Case 2 (test edge case): OFR001, Pkg1 with <200 distance case', () => {
     const costEstimator = new CostEstimator(100);
     packages = [
-      {
-        pkgId: 'PKG1',
-        pkgTotalWeight: 70,
-        distance: 199,
-        offerCode: 'OFR001',
-      },
-      {
-        pkgId: 'PKG2',
-        pkgTotalWeight: 100,
-        distance: 250,
-        offerCode: 'OFR002',
-      },
-      {
-        pkgId: 'PKG3',
-        pkgTotalWeight: 10,
-        distance: 100,
-        offerCode: 'OFR003',
-      },
+      new Package('PKG1', 70, 199, 'OFR001'),
+      new Package('PKG2', 100, 250, 'OFR002'),
+      new Package('PKG3', 10, 100, 'OFR003'),
     ];
 
     const result = costEstimator.estimate(packages);
@@ -70,24 +41,9 @@ describe('Estimate cost', () => {
   it('Test Case 3 (test minmax value exclusive): OFR001, Pkg1 200 distance case, should not get any discount', () => {
     const costEstimator = new CostEstimator(100);
     packages = [
-      {
-        pkgId: 'PKG1',
-        pkgTotalWeight: 70,
-        distance: 200,
-        offerCode: 'OFR001',
-      },
-      {
-        pkgId: 'PKG2',
-        pkgTotalWeight: 100,
-        distance: 250,
-        offerCode: 'OFR002',
-      },
-      {
-        pkgId: 'PKG3',
-        pkgTotalWeight: 10,
-        distance: 100,
-        offerCode: 'OFR003',
-      },
+      new Package('PKG1', 70, 200, 'OFR001'),
+      new Package('PKG2', 100, 250, 'OFR002'),
+      new Package('PKG3', 10, 100, 'OFR003'),
     ];
 
     const result = costEstimator.estimate(packages);
