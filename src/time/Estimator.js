@@ -1,107 +1,51 @@
-function getCombinations(arr) {
-  if (arr.length === 1) return [arr];
-  else {
-    const com = getCombinations(arr.slice(1));
-    return com.concat(
-      com.map((e) => e.concat(arr[0])),
-      [[arr[0]]]
-    );
-  }
-}
-
-const groupPackageByMaxWeight = (maxWeight, pkgs) => {
-  const packageIds = pkgs.map((pkg) => pkg.id);
-  const allPackageCombinations = getCombinations(packageIds).reverse(); // Get combinations recursive function, will return the last element first. so use the reverse function to sort the combinations according to the input sequence.
-
-  let packageCombsWeight = allPackageCombinations
-    .map((pckComb) => {
-      const thisShipmentPackages = pkgs.reduce((prev, pkg) => {
-        if (pckComb.includes(pkg.id)) prev.push(pkg);
-        return prev;
-      }, []);
-
-      const weight = thisShipmentPackages.reduce((prev, pkg) => {
-        return prev + pkg.weight;
-      }, 0);
-
-      const minDistance = Math.min(...thisShipmentPackages.map((pkg) => pkg.distance));
-
-      return { id: pckComb.join('-'), pckComb, weight, minDistance };
-    })
-    .filter((x) => x.weight <= maxWeight)
-    .sort((a, b) => a.minDistance - b.minDistance)
-    .sort((a, b) => b.weight - a.weight)
-    .sort((a, b) => b.pckComb.length - a.pckComb.length);
-
-  const packageGroup = [];
-  while (packageCombsWeight.length > 0) {
-    packageGroup.push(packageCombsWeight[0]);
-
-    const filterPkgIds = packageCombsWeight[0].pckComb;
-    filterPkgIds.forEach((pkgId) => {
-      packageCombsWeight = packageCombsWeight.filter((x) => !x.pckComb.includes(pkgId));
-    });
-  }
-
-  return packageGroup;
-};
-
-const schedule = (trips, packages, noOfVehicles, maxSpeed) => {
-  const schedule = trips.reduce(
-    (prev, curr) => {
-      const allVehicles = JSON.parse(JSON.stringify(prev.slice(-1)[0]));
-      const minHr = Math.min(...allVehicles.map((v) => v.hr));
-
-      const pckCombOneWayHr = curr.pckComb.map((id) => {
-        return {
-          pkgId: id,
-          oneWayHr: Math.floor((packages.find((pkg) => pkg.id == id).distance / maxSpeed) * 100) / 100,
-        };
-      });
-
-      const maxReturnTripsHrs = Math.max(...pckCombOneWayHr.map((p) => p.oneWayHr * 2));
-      const pckCombDeliveryHr = pckCombOneWayHr.map((p) => {
-        return { pkgId: p.pkgId, deliveryHr: parseFloat((p.oneWayHr + minHr).toFixed(2)) };
-      });
-
-      const affectedVehicle = allVehicles[allVehicles.map((v) => v.hr).indexOf(minHr)];
-      affectedVehicle.hr = minHr + maxReturnTripsHrs;
-      affectedVehicle.id = curr.id;
-      affectedVehicle.pckCombDeliveryHr = pckCombDeliveryHr;
-
-      prev.push(allVehicles);
-      return prev;
-    },
-    [new Array(noOfVehicles).fill({ id: null, hr: 0, pckCombDeliveryHr: [] })]
-  );
-
-  return schedule;
-};
+const DeliveryRecord = require('./DeliveryRecord');
+const TripPlanner = require('./TripPlanner');
+const Vehicle = require('./Vehicle');
 
 class Estimator {
   constructor(noOfVehicles, maxSpeed, maxWeight) {
-    this.noOfVehicles = noOfVehicles;
-    this.maxSpeed = maxSpeed;
-    this.maxWeight = maxWeight;
+    this.vehicles = new Array(noOfVehicles).fill().map(() => new Vehicle(maxSpeed));
+    this.planner = new TripPlanner(maxWeight);
   }
 
+  /**
+   * Get the next available vehicle (have the lowest value of hrs).
+   * @return {Vehicle} vehicle object will perform next deliver.
+   */
+  getNextAvailableVehicle() {
+    const sortedVehicles = this.vehicles.sort((a, b) => a.hrs - b.hrs);
+    return sortedVehicles[0];
+  }
+
+  /**
+   * Returns all the delivery record after each vehicle perform deliver.
+   * @param {Trip[]} trips an array of planned trips.
+   * @return {DeliveryRecord[]} array of DeliveryRecord
+   */
+  getDeliveryRecords(trips) {
+    let result = [];
+    trips.forEach((trip) => {
+      const vehicle = this.getNextAvailableVehicle();
+      const tripDeliveryRecords = vehicle.deliver(trip);
+      result = result.concat(tripDeliveryRecords);
+    });
+
+    return result;
+  }
+
+  /**
+   * Estimate packages delivery time used by returns object with package id as key, hrs as value.
+   * @param {Package[]} packages an array of packages.
+   * @return {Object} package id as key, hrs as value
+   */
   estimate(packages) {
-    let trips = groupPackageByMaxWeight(this.maxWeight, packages);
-    const sched = schedule(trips, packages, this.noOfVehicles, this.maxSpeed);
+    const trips = this.planner.plan(packages);
+    const deliveryRecords = this.getDeliveryRecords(trips);
 
-    const packageTime = sched
-      .reduce((prev, curr) => {
-        return prev.concat(curr.map((v) => v.pckCombDeliveryHr));
-      }, [])
-      .reduce((prev, curr) => {
-        return prev.concat(curr);
-      }, [])
-      .reduce((prev, curr) => {
-        if (!prev[curr.pkgId]) prev[curr.pkgId] = curr.deliveryHr;
-        return prev;
-      }, {});
-
-    return packageTime;
+    return deliveryRecords.reduce((prev, curr) => {
+      if (!prev[curr.pkgId]) prev[curr.pkgId] = curr.hrs;
+      return prev;
+    }, {});
   }
 }
 

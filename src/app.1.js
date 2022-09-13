@@ -1,7 +1,7 @@
 'use strict';
 const util = require('util');
 const Estimator = require('./cost/Estimator');
-const Package = require('./entities/Package');
+const Package = require('./shared/Package');
 
 process.stdin.resume();
 process.stdin.setEncoding('utf-8');

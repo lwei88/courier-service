@@ -1,7 +1,7 @@
 require('jest');
 
 const TimeEstimator = require('../src/time/Estimator');
-const Package = require('../src/entities/Package');
+const Package = require('../src/shared/Package');
 
 describe('Estimate time', () => {
   /*

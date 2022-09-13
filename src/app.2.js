@@ -2,7 +2,7 @@
 const util = require('util');
 const CostEstimator = require('./cost/Estimator');
 const TimeEstimator = require('./time/Estimator');
-const Package = require('./entities/Package');
+const Package = require('./shared/Package');
 
 process.stdin.resume();
 process.stdin.setEncoding('utf-8');

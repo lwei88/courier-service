@@ -1,7 +1,7 @@
 require('jest');
 
 const CostEstimator = require('../src/cost/Estimator');
-const Package = require('../src/entities/Package');
+const Package = require('../src/shared/Package');
 
 describe('Estimate cost', () => {
   it('Test Case 1', () => {

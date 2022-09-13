@@ -1,8 +1,9 @@
 const discount = require('./discount');
+const round = require('../helpers/round');
 
-const deliveryCost = (baseDeliveryCost, pkgTotalWeight, distance) => {
+function deliveryCost(baseDeliveryCost, pkgTotalWeight, distance) {
   return baseDeliveryCost + pkgTotalWeight * 10 + distance * 5;
-};
+}
 
 class Estimator {
   constructor(baseDeliveryCost, deliveryCostFunction = deliveryCost) {
@@ -15,8 +16,7 @@ class Estimator {
       const cost = this.deliveryCostFunction(this.baseDeliveryCost, pkg.weight, pkg.distance);
       const disc = cost * discount(pkg);
 
-      if (!result[pkg.id]) result[pkg.id] = { discount: Math.round(disc), totalCost: Math.round(cost - disc) };
-
+      if (!result[pkg.id]) result[pkg.id] = { discount: round(disc), totalCost: round(cost - disc) };
       return result;
     }, {});
   }
