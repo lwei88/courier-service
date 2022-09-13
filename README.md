@@ -62,11 +62,11 @@ _Reminder: Hit CTRL-D after finished input the data into the Terminal_
 
 #
 
-#
-
 # Ideology and thought process:
 
 I separated the issue into 2 parts. One for Problem 1 (Cost estimation). Another one for Problem 2(Time estimation). However, both share the same codebase as problem 2 will share part of the logic from the first part.
+<br>
+<br>
 
 ## Cost Estimation:
 
@@ -77,100 +77,19 @@ So i separated the **base delivery cost calculation** into a separated function.
 Besides, i also separated the **offer code** into different module, enabled us to add new offer codes or make any changes to anything related to **discount**.
 
 I also make sure the data structure of the **offer**, so that it can cater for different comparison of the value whether it's inclusive or exclusive.
+<br>
+<br>
 
 ## Time Estimation:
 
 Part 2 become quite a challenging task.
 
-First, i make a recursive function to find out all the different combination of packages. Then, filter out all the packages that exceeded the defined weight. Next, sort it by weight. Using a while loop, pop out the first trip's packages. Then remove the packages that existed within the array. The loop will break when the array become empty.
+First, use **TripPlanner** to plan the trip. Here, will fullfil all the delivery criteria depends on the priority of each criteria. Finally will return list of optimized **trips** for the Estimator's usage.
 
-Now we have all the packages combination ordered to be picked by delivery vehicle.
+Next, the **Estimator** will loop through each trip. During each trip, the Estimator get the next available vehicle to perform delivery. After each delivery, the vehicle will return a list of **DeliveryRecords** to consists of the delivery time for each package within the trip.
 
-Next, we needed to tackle how the each package's delivery time to be calculated. So, a ledger of accumulated after each trip was confirmed.
+After finished all the trips, all packages' delivery time will be recorded in **DeliveryRecords**.
+<br>
+<br>
 
-So, i used a reduce method for each trip, instantiate a beginning state for each vehicle depends on how many are available. For example: 2 vehicle the instantiated state will looked like the json below:
-
-```
-[
-    [
-        { id: null, hr: 0, pckCombDeliveryHr: [] }, // Vehicle 1
-        { id: null, hr: 0, pckCombDeliveryHr: [] }  // Vehicle 2
-    ]
-]
-```
-
-As we loop through the "trips", we will update the ledger above. For example: vehicle 1 picked the first delivery trip. the ledger will updated become something like this:
-
-```
-[
-    [
-        {
-            "id": "PKG4-PKG2",
-            "hr": 3.56,
-            "pckCombDeliveryHr": [
-            { "pkgId": "PKG4", "deliveryHr": 0.85 },
-            { "pkgId": "PKG2", "deliveryHr": 1.78 }
-            ]
-        },
-        { "id": null, "hr": 0, "pckCombDeliveryHr": [] }
-    ]
-]
-```
-
-By the end, we should be able to get a ledger looked like this:
-
-```
-[
-  [
-    { "id": null, "hr": 0, "pckCombDeliveryHr": [] },
-    { "id": null, "hr": 0, "pckCombDeliveryHr": [] }
-  ],
-  [
-    {
-      "id": "PKG4-PKG2",
-      "hr": 3.56,
-      "pckCombDeliveryHr": [
-        { "pkgId": "PKG4", "deliveryHr": 0.85 },
-        { "pkgId": "PKG2", "deliveryHr": 1.78 }
-      ]
-    },
-    { "id": null, "hr": 0, "pckCombDeliveryHr": [] }
-  ],
-  [
-    {
-      "id": "PKG4-PKG2",
-      "hr": 3.56,
-      "pckCombDeliveryHr": [
-        { "pkgId": "PKG4", "deliveryHr": 0.85 },
-        { "pkgId": "PKG2", "deliveryHr": 1.78 }
-      ]
-    },
-    { "id": "PKG3", "hr": 2.84, "pckCombDeliveryHr": [{ "pkgId": "PKG3", "deliveryHr": 1.42 }] }
-  ],
-  [
-    {
-      "id": "PKG4-PKG2",
-      "hr": 3.56,
-      "pckCombDeliveryHr": [
-        { "pkgId": "PKG4", "deliveryHr": 0.85 },
-        { "pkgId": "PKG2", "deliveryHr": 1.78 }
-      ]
-    },
-    { "id": "PKG5", "hr": 5.54, "pckCombDeliveryHr": [{ "pkgId": "PKG5", "deliveryHr": 4.19 }] }
-  ],
-  [
-    { "id": "PKG1", "hr": 4.4, "pckCombDeliveryHr": [{ "pkgId": "PKG1", "deliveryHr": 3.98 }] },
-    { "id": "PKG5", "hr": 5.54, "pckCombDeliveryHr": [{ "pkgId": "PKG5", "deliveryHr": 4.19 }] }
-  ]
-]
-```
-
-So what is **hr**?
-
-It is the return time used for each trip. It's calculated based on the max distance of the package \* 2 / maxspeed.
-
-So how do we determine which vehicle to update, when we append to the ledger, we determine by the previous min value of **hr** among all the vehicle.
-
-For each package, we just needed to add the time used for each trip on top of last **hr**.
-
-Once we got the completed ledger, we can use reduce function to get individual package with their delivery time.
+_ps: may refer comments of function to understand the usage and purpose of the function_
